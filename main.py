@@ -2,6 +2,7 @@
 # the open-source pygame library
 # throughout this file
 import pygame
+import sys
 from constants import *
 from player import Player
 from asteroid import Asteroid
@@ -18,11 +19,13 @@ def main():
     updatable = pygame.sprite.Group()
     drawable = pygame.sprite.Group()
     asteroids = pygame.sprite.Group()
+    player_group = pygame.sprite.GroupSingle() 
     Asteroid.containers = (asteroids, updatable, drawable)
     AsteroidField.containers = (updatable,)
     AsteroidField()
-    Player.containers = (updatable, drawable)
-    Player(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2) # creates player and adds to group above
+    Player.containers = (player_group, updatable, drawable)  # Updated to include player_group
+    Player(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
+    player = player_group.sprite
     while(True):
         #Handle events first
         for event in pygame.event.get():
@@ -31,6 +34,11 @@ def main():
         # updates all entities
         for entity in updatable:
             entity.update(dt)
+
+        for asteroid in asteroids:
+            if player.collision(asteroid):
+                print("Game over!")
+                sys.exit()
         #Fill the screen with black
         screen.fill((0, 0, 0))
         # Draw the player entities
