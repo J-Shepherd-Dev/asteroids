@@ -30,6 +30,8 @@ def main():
     Player(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
     player = player_group.sprite
     while(True):
+        #handle the framerate
+        dt = clock.tick(60) / 1000
         #Handle events first
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -41,8 +43,8 @@ def main():
             collided_shots = pygame.sprite.spritecollide(asteroid, shots, False)
             for shot in collided_shots:
                 shot.kill()
-                asteroid.kill()
-            if player.collision(asteroid):
+                asteroid.split()
+            if player.collision(asteroid, dt):
                 print("Game over!")
                 sys.exit()
         #Fill the screen with black
@@ -52,8 +54,7 @@ def main():
             entity.draw(screen)
         #Update the display
         pygame.display.flip()
-        #handle the framerate
-        dt = clock.tick(60) / 1000
+
     
 
 

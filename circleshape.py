@@ -18,8 +18,14 @@ class CircleShape(pygame.sprite.Sprite):
     def update(self, dt):
         # sub-classes must override
         pass
-    def collision(self, other):
-    # Calculate distance between centers using Vector2's distance_to
-        distance = self.position.distance_to(other.position)
-    # If distance is less than sum of radii, they're colliding
-        return distance <= (self.radius + other.radius)
+    def collision(self, other, dt):
+    # Calculate current and future distance between centers
+        current_distance = self.position.distance_to(other.position)
+    
+    # Predict positions after a small time step
+        future_position_self = self.position + self.velocity * dt
+        future_position_other = other.position + other.velocity * dt
+        future_distance = future_position_self.distance_to(future_position_other)
+
+    # If future distance is less than or equal to sum of radii, they're on collision course
+        return future_distance <= (self.radius + other.radius) or current_distance <= (self.radius + other.radius)
