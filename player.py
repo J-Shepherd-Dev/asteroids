@@ -1,11 +1,12 @@
 from circleshape import *
-from constants import PLAYER_RADIUS, PLAYER_TURN_SPEED, PLAYER_SPEED, PLAYER_SHOOT_SPEED
+from constants import PLAYER_RADIUS, PLAYER_TURN_SPEED, PLAYER_SPEED, PLAYER_SHOOT_SPEED, PLAYER_SHOOT_COOLDOWN
 from shot import Shot
 
 class Player(CircleShape):
     def  __init__(self, x, y):
         super().__init__(x, y, PLAYER_RADIUS)
         self.rotation = 0
+        self.shoot_cooldown = 0
     def draw(self, screen):
         pygame.draw.polygon(screen, "white", self.triangle(), 2)
     def rotate(self, dt):
@@ -23,9 +24,17 @@ class Player(CircleShape):
             self.rotate(-dt)
         if keys[pygame.K_d]:
             self.rotate(+dt)
-        if keys[pygame.K_SPACE]:  # Add this part
-            self.shoot()
+        if self.shoot_cooldown > 0:
+            self.shoot_cooldown -= dt
+        else:
+        # If the space key is pressed and cooldown allows, shoot
+            if keys[pygame.K_SPACE]:
+                self.shoot()
+
+
     def shoot(self):
+    # Set cooldown to prevent immediate subsequent shots
+        self.shoot_cooldown = PLAYER_SHOOT_COOLDOWN
     # Create direction vector and rotate it to match player direction
         direction = pygame.Vector2(0, 1).rotate(self.rotation)
     # Scale it by shoot speed
