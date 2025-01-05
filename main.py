@@ -37,8 +37,11 @@ def main():
         # updates all entities
         for entity in updatable:
             entity.update(dt)
-
         for asteroid in asteroids:
+            collided_shots = pygame.sprite.spritecollide(asteroid, shots, False)
+            for shot in collided_shots:
+                shot.kill()
+                asteroid.kill()
             if player.collision(asteroid):
                 print("Game over!")
                 sys.exit()
